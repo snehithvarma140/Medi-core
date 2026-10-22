@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Connection test document
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+
+    // Real-time patient telemetry streaming document
+    match /telemetry/{telemetryId} {
+      allow read: if isValidId(telemetryId);
+      allow create, update: if isValidId(telemetryId)
+        && request.resource.data.keys().hasAll(['mediId', 'heartRate', 'systolicBP', 'diastolicBP', 'spo2'])
+        && request.resource.data.mediId is string
+        && request.resource.data.heartRate is number;
+      allow delete: if isValidId(telemetryId);
+    }
+
+    // Patients collection
+    match /patients/{patientId} {
+      allow read: if isValidId(patientId);
+      allow create, update: if isValidId(patientId)
+        && request.resource.data.keys().hasAll(['mediId', 'firstName', 'lastName'])
+        && request.resource.data.mediId is string
+        && request.resource.data.firstName is string
+        && request.resource.data.lastName is string;
+      allow delete: if false;
+    }
+
+    // Appointments collection
+    match /appointments/{appointmentId} {
+      allow read: if isValidId(appointmentId);
+      allow create, update: if isValidId(appointmentId)
+        && request.resource.data.keys().hasAll(['id', 'patientId', 'doctorId', 'status'])
+        && request.resource.data.id is string
+        && request.resource.data.patientId is string
+        && request.resource.data.doctorId is string
+        && request.resource.data.status is string;
+      allow delete: if isValidId(appointmentId);
+    }
+
+    // Prescriptions collection
+    match /prescriptions/{prescriptionId} {
+      allow read: if isValidId(prescriptionId);
+      allow create, update: if isValidId(prescriptionId)
+        && request.resource.data.keys().hasAll(['id', 'patientId', 'doctorName'])
+        && request.resource.data.id is string
+        && request.resource.data.patientId is string
+        && request.resource.data.doctorName is string;
+      allow delete: if false;
+    }
+
+    // Emergency records
+    match /emergency_records/{recordId} {
+      allow read: if isValidId(recordId);
+      allow create, update: if isValidId(recordId)
+        && request.resource.data.keys().hasAll(['id', 'status'])
+        && request.resource.data.id is string
+        && request.resource.data.status is string;
+      allow delete: if false;
+    }
+
+    // Catch-all safety: Deny unmatched paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

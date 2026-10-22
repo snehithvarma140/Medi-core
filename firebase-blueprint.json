@@ -1,0 +1,133 @@
+{
+  "entities": {
+    "Patient": {
+      "title": "Patient",
+      "description": "Patient demographic, clinical, and emergency profile",
+      "type": "object",
+      "properties": {
+        "mediId": { "type": "string" },
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "dateOfBirth": { "type": "string" },
+        "gender": { "type": "string" },
+        "bloodGroup": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "allergies": { "type": "string" },
+        "chronicConditions": { "type": "string" },
+        "emergencyContact": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["mediId", "firstName", "lastName"]
+    },
+    "TelemetryRecord": {
+      "title": "TelemetryRecord",
+      "description": "Real-time continuous physiological patient telemetry streaming record",
+      "type": "object",
+      "properties": {
+        "mediId": { "type": "string" },
+        "patientName": { "type": "string" },
+        "heartRate": { "type": "number" },
+        "systolicBP": { "type": "number" },
+        "diastolicBP": { "type": "number" },
+        "spo2": { "type": "number" },
+        "bodyTemp": { "type": "number" },
+        "respiratoryRate": { "type": "number" },
+        "pulseStatus": { "type": "string" },
+        "rhythmStatus": { "type": "string" },
+        "lastUpdated": { "type": "string" },
+        "leadTelemetry": { "type": "string" }
+      },
+      "required": ["mediId", "heartRate", "systolicBP", "diastolicBP", "spo2"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "Scheduled patient consultation with clinician",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "patientId": { "type": "string" },
+        "patientName": { "type": "string" },
+        "doctorId": { "type": "string" },
+        "doctorName": { "type": "string" },
+        "department": { "type": "string" },
+        "hospitalName": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["CONFIRMED", "WAITING", "COMPLETED", "CANCELLED"]
+        },
+        "reason": { "type": "string" }
+      },
+      "required": ["id", "patientId", "doctorId", "status"]
+    },
+    "Prescription": {
+      "title": "Prescription",
+      "description": "Issued medical prescription with medication schedule",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "patientId": { "type": "string" },
+        "patientName": { "type": "string" },
+        "doctorName": { "type": "string" },
+        "hospitalName": { "type": "string" },
+        "date": { "type": "string" },
+        "diagnosis": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "patientId", "doctorName"]
+    },
+    "EmergencyRecord": {
+      "title": "EmergencyRecord",
+      "description": "Emergency triage intake case",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "temporaryId": { "type": "string" },
+        "patientId": { "type": "string" },
+        "condition": { "type": "string" },
+        "triagePriority": { "type": "string" },
+        "arrivalMode": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "status"]
+    },
+    "TestConnection": {
+      "title": "TestConnection",
+      "description": "Ping document for Firestore connection validation",
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/patients/{patientId}": {
+      "schema": "Patient",
+      "description": "Patient profiles and health records"
+    },
+    "/telemetry/{telemetryId}": {
+      "schema": "TelemetryRecord",
+      "description": "Live real-time telemetry stream synchronized per Medi ID"
+    },
+    "/appointments/{appointmentId}": {
+      "schema": "Appointment",
+      "description": "Patient appointments"
+    },
+    "/prescriptions/{prescriptionId}": {
+      "schema": "Prescription",
+      "description": "Issued prescriptions"
+    },
+    "/emergency_records/{recordId}": {
+      "schema": "EmergencyRecord",
+      "description": "Emergency triage admissions and rapid scan cases"
+    },
+    "/test/{docId}": {
+      "schema": "TestConnection",
+      "description": "System test connection document"
+    }
+  }
+}

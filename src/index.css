@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@keyframes spin-inside-45 {
+  0% {
+    transform: rotateZ(45deg) rotateY(0deg) rotateX(16deg);
+  }
+  50% {
+    transform: rotateZ(45deg) rotateY(180deg) rotateX(16deg);
+  }
+  100% {
+    transform: rotateZ(45deg) rotateY(360deg) rotateX(16deg);
+  }
+}
+
+@keyframes spin-reverse-slow {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* 3D Transform Utilities */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.perspective-900 {
+  perspective: 900px;
+}
